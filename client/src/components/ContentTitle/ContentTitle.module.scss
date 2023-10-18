@@ -1,0 +1,35 @@
+.contentHeader {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 40px;
+	h1 {
+		font-style: normal;
+		font-weight: 700;
+		font-size: 32px;
+		line-height: 39px;
+		color: #000000;
+	}
+	h1:first-letter {
+		text-transform: uppercase;
+	}
+	.search {
+		position: relative;
+		input {
+			width: 250px;
+			height: 45px;
+			border-radius: 10px;
+			border: 2px solid #f3f3f3;
+			font-style: normal;
+			font-weight: 400;
+			font-size: 14px;
+			line-height: 17px;
+			color: #c4c4c4;
+			padding-left: 40px;
+		}
+		svg {
+			position: absolute;
+			left: 15px;
+			bottom: 15px;
+		}
+	}
+}
