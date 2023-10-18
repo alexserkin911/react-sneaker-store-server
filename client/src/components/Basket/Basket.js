@@ -25,7 +25,7 @@ export default function Basket({
 						<div className={styles.items}>
 							{basketItems.map((el) => (
 								<BasketItems
-									key={el.id}
+									key={el.sneakerId}
 									{...el}
 									onRemoveBasket={onRemoveBasket}
 								/>

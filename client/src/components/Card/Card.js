@@ -13,6 +13,7 @@ export default function Card({
 	onPlus,
 	onFavorite,
 	basketItems,
+	onRemoveBasket,
 }) {
 	const [isAdded, setIsAdded] = useState(false)
 	const [isFavorite, setIsFavorite] = useState(false)
@@ -27,7 +28,7 @@ export default function Card({
 	}
 
 	useEffect(() => {
-		const foundInBasket = basketItems.some((el) => +el.id === +id)
+		const foundInBasket = basketItems.some((el) => el.sneakerId === id)
 		setIsAdded(foundInBasket)
 	}, [basketItems, id])
 
@@ -48,7 +49,7 @@ export default function Card({
 					<span className={styles.cardFooterLeftPrice}>{price}</span>
 				</div>
 				{isAdded ? (
-					<SvgGreenOk onClickPlus={onClickPlus} />
+					<SvgGreenOk onClickPlus={() => onRemoveBasket(id)} />
 				) : (
 					<SvgPlus onClickPlus={onClickPlus} />
 				)}

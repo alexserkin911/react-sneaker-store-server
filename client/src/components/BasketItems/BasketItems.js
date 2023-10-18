@@ -3,14 +3,14 @@ import SvgRemove from '../Basket/SvgRemove'
 import styles from './BasketItems.module.scss'
 
 export default function BasketItems({
-	id,
+	sneakerId,
 	title,
 	price,
 	imageUrl,
 	onRemoveBasket,
 }) {
 	const onClick = () => {
-		onRemoveBasket(id)
+		onRemoveBasket(sneakerId)
 	}
 	return (
 		<div className={styles.cartItem}>

@@ -12,25 +12,30 @@ function App() {
 	const [searchValue, setSearchValue] = useState('')
 	const [openBasket, setOpenBasket] = useState(false)
 
+	console.log(items)
 	useEffect(() => {
-		axios
-			.get('https://652cfb8df9afa8ef4b269123.mockapi.io/items')
-			.then((response) => setItems(response.data))
-		axios
-			.get('https://652cfb8df9afa8ef4b269123.mockapi.io/basket')
-			.then((res) => setBasketItems(res.data))
+		axios.get('http://localhost:3001/sneakers').then((response) => {
+			console.log(response.data)
+			setItems(response.data)
+		})
+		axios.get('http://localhost:3001/basket').then((res) => {
+			console.log(res.data)
+			setBasketItems(res.data)
+		})
 	}, [])
 
 	const onAddBasket = (item) => {
-		axios.post('https://652cfb8df9afa8ef4b269123.mockapi.io/basket', item)
+		const newItem = { ...item, sneakerId: item.id }
 
-		setBasketItems((pre) => [...pre, item])
+		axios.post('http://localhost:3001/sneakers', item)
+		console.log(item)
+		setBasketItems((pre) => [...pre, newItem])
 	}
-
+	console.log(basketItems)
 	const onRemoveBasket = (id) => {
-		axios.delete(`https://652cfb8df9afa8ef4b269123.mockapi.io/basket/${id}`)
+		axios.delete(`http://localhost:3001/basket/${id}`)
 
-		setBasketItems((pre) => [...pre.filter((el) => el.id !== id)])
+		setBasketItems((pre) => [...pre.filter((el) => el.sneakerId !== id)])
 	}
 
 	const onChangeInput = (event) => {
@@ -58,6 +63,7 @@ function App() {
 							<Card
 								key={el.id}
 								{...el}
+								onRemoveBasket={onRemoveBasket}
 								onPlus={(item) => onAddBasket(item)}
 								basketItems={basketItems}
 								onFavorit={() => console.log(123)}
