@@ -11,12 +11,14 @@ export default function Card({
 	title,
 	price,
 	onPlus,
-	onFavorite,
 	basketItems,
 	onRemoveBasket,
+	onAddFavorite,
+	favoriteItems,
+	isFavored = false,
 }) {
 	const [isAdded, setIsAdded] = useState(false)
-	const [isFavorite, setIsFavorite] = useState(false)
+	const [isFavorite, setIsFavorite] = useState(isFavored)
 
 	const onClickPlus = () => {
 		onPlus({ id, imageUrl, title, price })
@@ -24,6 +26,7 @@ export default function Card({
 	}
 
 	const onClickHeart = () => {
+		onAddFavorite({ id, imageUrl, title, price })
 		setIsFavorite(!isFavorite)
 	}
 
@@ -31,6 +34,11 @@ export default function Card({
 		const foundInBasket = basketItems.some((el) => el.sneakerId === id)
 		setIsAdded(foundInBasket)
 	}, [basketItems, id])
+
+	useEffect(() => {
+		const foundInFavorite = favoriteItems.some((el) => el.sneakerId === id)
+		setIsFavorite(foundInFavorite)
+	}, [favoriteItems, id])
 
 	return (
 		<div className={styles.card}>

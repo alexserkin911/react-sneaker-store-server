@@ -53,12 +53,22 @@ body {
 }
 .headerInfo {
 	h3 {
+		font-style: normal;
+		font-weight: 700;
+		font-size: 20px;
+		line-height: 24px;
 		text-transform: uppercase;
+		color: #000000;
+		text-decoration: none;
 	}
 	p {
-		opacity: 0.5;
+		font-style: normal;
+		font-weight: 400;
+		font-size: 14px;
+		line-height: 17px;
+		color: #9d9d9d;
 	}
-	p:first-letter {
+	p::first-letter {
 		text-transform: uppercase;
 	}
 }
@@ -66,4 +76,22 @@ body {
 .content {
 	margin: 0;
 	padding: 40px 45px;
+}
+
+.favorites {
+	display: flex;
+	flex-direction: column;
+	gap: 40px;
+	h1 {
+		display: flex;
+		gap: 21px;
+		svg {
+			cursor: pointer;
+		}
+	}
+}
+.favoriteItems {
+	display: flex;
+	gap: 35px;
+	flex-wrap: wrap;
 }

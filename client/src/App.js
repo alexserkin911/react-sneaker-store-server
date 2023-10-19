@@ -1,41 +1,76 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
+import { Route, Routes } from 'react-router-dom'
 import Basket from './components/Basket/Basket'
-import Card from './components/Card/Card'
-import ContentTitle from './components/ContentTitle/ContentTitle'
 import Header from './components/Header/Header'
+import Favorites from './pages/Favorites'
+import Home from './pages/Home'
 import './style/index.scss'
 
 function App() {
 	const [items, setItems] = useState([])
 	const [basketItems, setBasketItems] = useState([])
+	const [favoriteItems, setFavoriteItems] = useState([])
 	const [searchValue, setSearchValue] = useState('')
 	const [openBasket, setOpenBasket] = useState(false)
 
-	console.log(items)
 	useEffect(() => {
-		axios.get('http://localhost:3001/sneakers').then((response) => {
-			console.log(response.data)
-			setItems(response.data)
-		})
-		axios.get('http://localhost:3001/basket').then((res) => {
-			console.log(res.data)
-			setBasketItems(res.data)
-		})
+		const fetchData = async () => {
+			try {
+				const sneakersResponse = await axios.get(
+					'http://localhost:3001/sneakers'
+				)
+				setItems(sneakersResponse.data)
+
+				const basketResponse = await axios.get('http://localhost:3001/basket')
+				setBasketItems(basketResponse.data)
+
+				const favoritesResponse = await axios.get(
+					'http://localhost:3001/favorites'
+				)
+				setFavoriteItems(favoritesResponse.data)
+			} catch (error) {
+				console.error('Ошибка при загрузке данных:', error)
+			}
+		}
+
+		fetchData()
 	}, [])
 
-	const onAddBasket = (item) => {
-		const newItem = { ...item, sneakerId: item.id }
-
-		axios.post('http://localhost:3001/sneakers', item)
-		console.log(item)
-		setBasketItems((pre) => [...pre, newItem])
+	const onAddBasket = async (item) => {
+		try {
+			const newItem = { ...item, sneakerId: item.id }
+			await axios.post('http://localhost:3001/sneakers', item)
+			setBasketItems((prev) => [...prev, newItem])
+		} catch (error) {
+			console.error('Ошибка при добавлении в корзину:', error)
+		}
 	}
-	console.log(basketItems)
-	const onRemoveBasket = (id) => {
-		axios.delete(`http://localhost:3001/basket/${id}`)
 
-		setBasketItems((pre) => [...pre.filter((el) => el.sneakerId !== id)])
+	const onRemoveBasket = async (id) => {
+		try {
+			await axios.delete(`http://localhost:3001/basket/${id}`)
+			setBasketItems((prev) => [...prev.filter((el) => el.sneakerId !== id)])
+		} catch (error) {
+			console.error('Ошибка при удалении из корзины:', error)
+		}
+	}
+
+	const onAddFavorite = async (item) => {
+		try {
+			if (favoriteItems.find((el) => el.sneakerId === item.id)) {
+				await axios.delete(`http://localhost:3001/favorites/${item.id}`)
+				setFavoriteItems((prev) => [
+					...prev.filter((el) => el.sneakerId !== item.id),
+				])
+			} else {
+				const newItem = { ...item, sneakerId: item.id }
+				await axios.post('http://localhost:3001/favorites', item)
+				setFavoriteItems((prev) => [...prev, newItem])
+			}
+		} catch (error) {
+			console.error('Ошибка при добавлении/удалении из избранного:', error)
+		}
 	}
 
 	const onChangeInput = (event) => {
@@ -51,25 +86,41 @@ function App() {
 					onClickClose={() => setOpenBasket(false)}
 				/>
 			)}
+
 			<Header onClickOpen={() => setOpenBasket(true)} />
 			<div className='content'>
-				<ContentTitle searchValue={searchValue} onChangeInput={onChangeInput} />
-				<div style={{ display: 'flex', gap: 35, flexWrap: 'wrap' }}>
-					{items
-						.filter((el) =>
-							el.title.toLowerCase().includes(searchValue.toLowerCase())
-						)
-						.map((el, index) => (
-							<Card
-								key={el.id}
-								{...el}
+				<Routes>
+					<Route
+						path='/'
+						exact
+						element={
+							<Home
+								items={items}
+								searchValue={searchValue}
+								favoriteItems={favoriteItems}
+								onAddBasket={onAddBasket}
+								onAddFavorite={onAddFavorite}
+								onChangeInput={onChangeInput}
 								onRemoveBasket={onRemoveBasket}
-								onPlus={(item) => onAddBasket(item)}
 								basketItems={basketItems}
-								onFavorit={() => console.log(123)}
 							/>
-						))}
-				</div>
+						}
+					/>
+
+					<Route
+						path='/favorites'
+						exact
+						element={
+							<Favorites
+								favoriteItems={favoriteItems}
+								onRemoveBasket={onRemoveBasket}
+								basketItems={basketItems}
+								onAddFavorite={onAddFavorite}
+								onAddBasket={onAddBasket}
+							/>
+						}
+					/>
+				</Routes>
 			</div>
 		</div>
 	)

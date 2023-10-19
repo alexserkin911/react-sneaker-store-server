@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-const { Sneaker, Basket } = require('./db/models');
+const { Sneaker, Basket, Favorite } = require('./db/models');
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -31,6 +31,16 @@ app.get('/basket', async (req, res) => {
   }
 });
 
+app.get('/favorites', async (req, res) => {
+  try {
+    const favoriteAll = await Favorite.findAll();
+    res.json(favoriteAll);
+  } catch (error) {
+    console.warn('Error fetching the favorite', error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
+
 app.post('/sneakers', async (req, res) => {
   try {
     const { id, title, price, imageUrl } = req.body;
@@ -47,6 +57,22 @@ app.post('/sneakers', async (req, res) => {
   }
 });
 
+app.post('/favorites', async (req, res) => {
+  try {
+    const { id, title, price, imageUrl } = req.body;
+
+    const favoriteItem = await Favorite.create({
+      title,
+      price,
+      imageUrl,
+      sneakerId: id,
+    });
+    res.status(200).json(favoriteItem);
+  } catch (error) {
+    res.status(500).json({ error: 'Ошибка при добавлении товара в favorite' });
+  }
+});
+
 app.delete('/basket/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -56,6 +82,18 @@ app.delete('/basket/:id', async (req, res) => {
     res.status(200).json({ message: 'Товар успешно удален из корзины' });
   } catch (error) {
     res.status(500).json({ error: 'Ошибка при удалении товара из корзины' });
+  }
+});
+
+app.delete('/favorites/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await Favorite.destroy({
+      where: { sneakerId: id },
+    });
+    res.status(200).json({ message: 'Товар успешно удален из Favorite' });
+  } catch (error) {
+    res.status(500).json({ error: 'Ошибка при удалении товара из Favorite' });
   }
 });
 
