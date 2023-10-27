@@ -38,6 +38,9 @@ body {
 		justify-content: center;
 		align-items: center;
 		gap: 10px;
+		svg {
+			cursor: pointer;
+		}
 		a {
 			display: flex;
 			justify-content: center;

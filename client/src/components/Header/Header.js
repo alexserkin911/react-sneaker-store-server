@@ -10,9 +10,9 @@ export default function Header({ onClickOpen }) {
 
 	return (
 		<header className='header'>
-			<Link to={'/'}>
+			<Link to={''}>
 				<div className='headerLeft'>
-					<img width={40} height={40} src='/img/logo.png' alt='logo' />
+					<img width={40} height={40} src='img/logo.png' alt='logo' />
 					<div className='headerInfo'>
 						<h3>React Sneakers</h3>
 						<p>магазин лучших кроссовок</p>
@@ -25,13 +25,13 @@ export default function Header({ onClickOpen }) {
 					<span>{totalPrice} руб.</span>
 				</li>
 				<li>
-					<Link to={'/favorites'}>
+					<Link to={'favorites'}>
 						<SvgFavorite />
 					</Link>
 					<span>Закладки</span>
 				</li>
 				<li>
-					<Link to={'/orders'}>
+					<Link to={'orders'}>
 						<SvgUser />
 					</Link>
 					<span>Профиль</span>
