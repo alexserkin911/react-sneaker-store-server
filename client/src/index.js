@@ -2,13 +2,16 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App'
+import { AllContextProvider } from './context'
 import './style/normalize.css'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
 	<React.StrictMode>
 		<BrowserRouter>
-			<App />
+			<AllContextProvider>
+				<App />
+			</AllContextProvider>
 		</BrowserRouter>
 	</React.StrictMode>
 )

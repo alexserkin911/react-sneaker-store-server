@@ -30,14 +30,21 @@ body {
 
 .headerRight {
 	display: flex;
+	justify-content: center;
 	align-items: center;
 	gap: 30px;
 	li {
 		display: flex;
+		justify-content: center;
 		align-items: center;
 		gap: 10px;
-		svg {
-			cursor: pointer;
+		a {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			svg {
+				cursor: pointer;
+			}
 		}
 		span {
 			font-style: normal;

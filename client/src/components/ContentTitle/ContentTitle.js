@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { ContextAll } from '../../context'
 import styles from './ContentTitle.module.scss'
 
-export default function ContentTitle({ searchValue, onChangeInput }) {
+export default function ContentTitle() {
+	const { searchValue, onChangeInput } = useContext(ContextAll)
 	return (
 		<div className={styles.contentHeader}>
 			<h1>все кроссовки</h1>

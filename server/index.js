@@ -2,7 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-const { Sneaker, Basket, Favorite } = require('./db/models');
+const { faker } = require('@faker-js/faker');
+const { Sneaker, Basket, Favorite, Order, OrderId } = require('./db/models');
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -41,10 +42,19 @@ app.get('/favorites', async (req, res) => {
   }
 });
 
-app.post('/sneakers', async (req, res) => {
+app.get('/orders', async (req, res) => {
   try {
-    const { id, title, price, imageUrl } = req.body;
+    const ordersAll = await Order.findAll();
+    res.json(ordersAll);
+  } catch (error) {
+    console.warn('Error fetching the order', error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
 
+app.post('/sneakers', async (req, res) => {
+  const { id, title, price, imageUrl } = req.body;
+  try {
     const basketItem = await Basket.create({
       title,
       price,
@@ -58,9 +68,8 @@ app.post('/sneakers', async (req, res) => {
 });
 
 app.post('/favorites', async (req, res) => {
+  const { id, title, price, imageUrl } = req.body;
   try {
-    const { id, title, price, imageUrl } = req.body;
-
     const favoriteItem = await Favorite.create({
       title,
       price,
@@ -70,6 +79,47 @@ app.post('/favorites', async (req, res) => {
     res.status(200).json(favoriteItem);
   } catch (error) {
     res.status(500).json({ error: 'Ошибка при добавлении товара в favorite' });
+  }
+});
+
+app.post('/orders', async (req, res) => {
+  const orders = req.body;
+  // Генерация случайного имени заказчика
+  const randomName = faker.person.fullName();
+  // Генерация случайного номера телефона заказчика
+  const randomPhone = faker.phone.number();
+
+  try {
+    const orderItem = await OrderId.create({
+      name: randomName,
+      tel: randomPhone,
+    });
+    const orderIdFromBack = orderItem.id;
+    const createdOrders = await Promise.all(
+      orders.map((order) =>
+        Order.create({
+          title: order.title,
+          price: order.price,
+          imageUrl: order.imageUrl,
+          sneakerId: order.sneakerId,
+          orderId: orderIdFromBack,
+        })
+      )
+    );
+
+    res.status(200).json({ idOrder: orderIdFromBack, order: createdOrders });
+  } catch (error) {
+    res.status(500).json({ error: 'Ошибка при добавлении товара в orders' });
+  }
+});
+
+app.delete('/basket', async (req, res) => {
+  try {
+    await Basket.destroy({ where: {} });
+    res.status(200).json({ message: 'Basket is cleared' });
+  } catch (error) {
+    console.warn('Error clearing the basket', error);
+    res.status(500).json({ error: 'An error occurred' });
   }
 });
 

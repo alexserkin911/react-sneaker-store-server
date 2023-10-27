@@ -1,25 +1,46 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { ContextAll } from '../../context'
 import BasketItems from '../BasketItems/BasketItems'
 import Button from '../Button/Button'
-import CartEmpty from '../CartEmpty/CartEmpty'
+import Info from '../Info/Info'
 import styles from './Basket.module.scss'
 import SvgArrow from './SvgArrow'
 import SvgRemove from './SvgRemove'
 
-export default function Basket({
-	onClickClose,
-	basketItems = [],
-	onRemoveBasket,
-}) {
+export default function Basket() {
+	const {
+		openBasket,
+		totalPrice,
+		tax,
+		orderNumber,
+		basketItems,
+		isCompleteOrder,
+		onAddBasket,
+		onClickOrder,
+		setOpenBasket,
+	} = useContext(ContextAll)
+
 	return (
-		<div className={styles.overlay}>
+		<div
+			className={`${styles.overlay} ${openBasket ? styles.overlayVisible : ''}`}
+		>
 			<div className={styles.drawer}>
 				<h2>
 					Корзина
-					<SvgRemove onClick={onClickClose} />
+					<SvgRemove onClick={() => setOpenBasket(false)} />
 				</h2>
 				{basketItems.length < 1 ? (
-					<CartEmpty />
+					<Info
+						text={isCompleteOrder ? 'Заказ оформлен!' : 'Корзина пустая'}
+						description={
+							isCompleteOrder
+								? `Ваш заказ #${orderNumber} скоро будет передан курьерской доставке`
+								: 'Добавьте хотя бы одну пару кроссовок, чтобы сделать заказ.'
+						}
+						image={
+							isCompleteOrder ? '/img/icon/order.jpg' : '/img/icon/CartImg.jpg'
+						}
+					/>
 				) : (
 					<>
 						<div className={styles.items}>
@@ -27,7 +48,7 @@ export default function Basket({
 								<BasketItems
 									key={el.sneakerId}
 									{...el}
-									onRemoveBasket={onRemoveBasket}
+									onClick={() => onAddBasket({ ...el, id: el.sneakerId })}
 								/>
 							))}
 						</div>
@@ -38,16 +59,20 @@ export default function Basket({
 									<li>
 										<span>Итого:</span>
 										<div></div>
-										<p>21 498 руб.</p>
+										<p>{totalPrice} руб.</p>
 									</li>
 									<li>
 										<span>Налог 5%:</span>
 										<div></div>
-										<p>1074 руб.</p>
+										<p>{tax} руб.</p>
 									</li>
 								</ul>
 							</div>
-							<Button text={'Оформить заказ'} svg={<SvgArrow />} />
+							<Button
+								onClick={onClickOrder}
+								text={'Оформить заказ'}
+								svg={<SvgArrow />}
+							/>
 						</div>
 					</>
 				)}

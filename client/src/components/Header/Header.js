@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
+import { ContextAll } from '../../context'
 import SvgBasket from './SvgBasket'
 import SvgFavorite from './SvgFavorite'
 import SvgUser from './SvgUser'
 
 export default function Header({ onClickOpen }) {
+	const { totalPrice } = useContext(ContextAll)
+
 	return (
 		<header className='header'>
 			<Link to={'/'}>
@@ -19,7 +22,7 @@ export default function Header({ onClickOpen }) {
 			<ul className='headerRight'>
 				<li>
 					<SvgBasket onClickOpen={onClickOpen} />
-					<span>1250 rub</span>
+					<span>{totalPrice} руб.</span>
 				</li>
 				<li>
 					<Link to={'/favorites'}>
@@ -28,7 +31,9 @@ export default function Header({ onClickOpen }) {
 					<span>Закладки</span>
 				</li>
 				<li>
-					<SvgUser />
+					<Link to={'/orders'}>
+						<SvgUser />
+					</Link>
 					<span>Профиль</span>
 				</li>
 			</ul>
